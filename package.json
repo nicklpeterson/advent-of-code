@@ -1,0 +1,12 @@
+{
+  "name": "advent-of-code",
+  "version": "1.0.0",
+  "description": "Advent of Code Solutions",
+  "main": "index.js",
+  "author": "Nick Peterson",
+  "license": "MIT",
+  "private": false,
+  "devDependencies": {
+    "minimist": "1.2.8"
+  }
+}
