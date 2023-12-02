@@ -46,10 +46,12 @@ const solvePart1 = (games) =>
   }, 0);
 
 const solvePart2 = (games) =>
-  games.reduce((sum, game) => {
-    const maxes = getMaxes(game);
-    return sum + maxes.red * maxes.blue * maxes.green;
-  }, 0);
+  games.reduce(
+    (sum, game) =>
+      sum +
+      Math.max(...game.red) * Math.max(...game.blue) * Math.max(...game.green),
+    0
+  );
 
 const gameIsPossible = (game) => {
   let possible = true;
@@ -72,14 +74,6 @@ const gameIsPossible = (game) => {
   });
 
   return possible;
-};
-
-const getMaxes = (game) => {
-  return {
-    red: Math.max(...game.red),
-    blue: Math.max(...game.blue),
-    green: Math.max(...game.green),
-  };
 };
 
 const games = parseArgs();
