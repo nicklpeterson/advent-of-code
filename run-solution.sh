@@ -44,7 +44,9 @@ INPUT=$(curl -s --cookie "session=${ADVENT_OF_CODE_SESSION}" "https://adventofco
 # echo $INPUT
 SOLUTION=$(node $YEAR/$DAY.js $INPUT)
 
-echo ""
-echo "--------- ADVENT OF CODE: Year $YEAR, Day $DAY ---------"
-echo ""
-echo "The Solution is ... $SOLUTION"
+printf "\n"
+echo "--------- ADVENT OF CODE: Year $YEAR Day $DAY ---------"
+printf "\n"
+printf "The Solution is ... \n"
+printf "\n"
+printf "%s\n" "$SOLUTION"
