@@ -1,4 +1,4 @@
-var argv = require('minimist')(process.argv.slice(2));
+const argv = require('minimist')(process.argv.slice(2));
 
 const solve = (lines) =>
   lines.reduce((result, line) => getValueOfLine(line) + result, 0);
@@ -20,4 +20,4 @@ const getDigits = (line) =>
 
 const lines = argv._;
 
-console.log('result = ', solve(lines));
+console.log(solve(lines));

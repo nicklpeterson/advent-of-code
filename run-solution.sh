@@ -39,7 +39,12 @@ then
     usage
 fi
 
-INPUT=$(curl --cookie "session=${ADVENT_OF_CODE_SESSION}" "https://adventofcode.com/${YEAR}/day/${DAY}/input")
+INPUT=$(curl -s --cookie "session=${ADVENT_OF_CODE_SESSION}" "https://adventofcode.com/${YEAR}/day/${DAY}/input")
 
 # echo $INPUT
-node $YEAR/$DAY.js $INPUT
+SOLUTION=$(node $YEAR/$DAY.js $INPUT)
+
+echo ""
+echo "--------- ADVENT OF CODE: Year $YEAR, Day $DAY ---------"
+echo ""
+echo "The Solution is ... $SOLUTION"
