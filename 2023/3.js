@@ -17,14 +17,15 @@ class Schematic {
     return this.schematic[row];
   }
 
-  reduce(handler, initialValue) {
+  reduce(handler, initialValue = 0) {
     let result = initialValue;
 
     for (let row = 0; row < schematic.length; row++) {
       for (let col = 0; col < schematic.getRow(row).length; col++) {
         const cell = this.get(row, col);
-        const [nextResult, nextRow, nextCol] = handler(result, cell, row, col);
-        result = nextResult;
+        const [nextResult, nextRow, nextCol] =
+          handler(result, cell, row, col) ?? [];
+        result = nextResult ?? result;
         row = nextRow ?? row;
         col = nextCol ?? col;
       }
@@ -87,10 +88,8 @@ const solvePart1 = (schematic) => {
     if (!isNaN(cell) && schematic.isAdjacentToSymbol(row, col)) {
       const [partNumber, nextCol] = schematic.getNumber(row, col);
       return [acc + partNumber, row, nextCol];
-    } else {
-      return [acc, row, col];
     }
-  }, 0);
+  });
 };
 
 const solvePart2 = (schematic) => {
@@ -101,8 +100,7 @@ const solvePart2 = (schematic) => {
         return [(acc += adjacentNumbers[0] * adjacentNumbers[1])];
       }
     }
-    return [acc];
-  }, 0);
+  });
 };
 
 const schematic = new Schematic(argv._);
