@@ -56,8 +56,8 @@ const getNumberDigits = (line) =>
     if (!Number(char)) {
       return digits;
     }
-    
-    return updateDigits(digits, char)
+
+    return updateDigits(digits, char);
   }, []);
 
 const getNumberAndStringDigits = (line) => {
@@ -66,14 +66,14 @@ const getNumberAndStringDigits = (line) => {
   for (let left = 0; left < line.length; left++) {
     for (let right = left; right <= line.length; right++) {
       if (left === right && Number(line[left])) {
-        digits = updateDigits(digits, line[left])
+        digits = updateDigits(digits, line[left]);
       }
 
       const substring = line.slice(left, right);
       const number = numbers[substring];
 
       if (number) {
-        digits = updateDigits(digits, number)
+        digits = updateDigits(digits, number);
       }
     }
   }
@@ -83,11 +83,11 @@ const getNumberAndStringDigits = (line) => {
 
 const updateDigits = (digits, numberStr) => {
   if (digits.length === 0) {
-    return [numberStr[0], numberStr[numberStr.length - 1]]
+    return [numberStr[0], numberStr[numberStr.length - 1]];
   } else {
-    return [digits[0], numberStr[numberStr.length - 1]]
+    return [digits[0], numberStr[numberStr.length - 1]];
   }
-}
+};
 
 const lines = argv._;
 

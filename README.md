@@ -1,4 +1,4 @@
-### My Javascript solutions to adventofcode.com puzzles
+### My solutions to adventofcode.com puzzles
 
 This projects includes a start script that will download the input file from adventofcode.com and run the solution against it.
 
@@ -20,5 +20,5 @@ ADVENT_OF_CODE_SESSION=<Session token you copied in step 3>
 
 5. Run the script
 ```bash
-run-solution.sh --year 2023 --day 1
+run-solution.sh --year 2023 --day 1 --language <js|kts>
 ```
