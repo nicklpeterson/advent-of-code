@@ -77,17 +77,20 @@ const parseArgv = (input) => {
     .split(',')
     .filter((seed) => !isNaN(seed) && seed !== '');
 
+  const almanacMaps = [1, 2, 3, 4, 5, 6, 7].map(
+    (index) => new AlmanacMap(input[index])
+  );
+
   const seedToLocation = (seed) =>
-    [1, 2, 3, 4, 5, 6, 7].reduce(
-      (acc, index) => new AlmanacMap(input[index]).get(acc),
-      seed
-    );
+    almanacMaps.reduce((acc, map) => map.get(acc), seed);
 
   const seedRangeToLocation = (seedRange) =>
-    [2, 3, 4, 5, 6, 7].reduce(
-      (acc, index) => new AlmanacMap(input[index]).getRanges(acc),
-      new AlmanacMap(input[1]).getRange(seedRange)
-    );
+    almanacMaps
+      .slice(1)
+      .reduce(
+        (acc, map) => map.getRanges(acc),
+        almanacMaps[0].getRange(seedRange)
+      );
 
   return {
     seeds,
