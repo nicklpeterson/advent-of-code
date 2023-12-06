@@ -22,13 +22,23 @@ const quadraticFormula = ({ a, b, c }) => {
   return [sol1, sol2];
 };
 
-// Y = distance traveled
-// x = time pushing button
-// z = time of event
-// D = record distance
-// Y = x * (z - x)
-// Y = xz - x^2 = (-1)*x^2 + z * x + 0
-// 0 = (-1)*x^2 + z * x - D
+/**
+ * This is a math problem - fun!
+ * 
+ * Y = distance traveled
+ * x = time pushing button
+ * z = time of event
+ * D = record distance
+ * 
+ * Y = x * (z - x)
+ * Y = xz - x^2 = (-1)*x^2 + z * x + 0
+ * 
+ * Solve for x such that f(x) = D
+ * D = (-1)*x^2 + z * x
+ * 0 = (-1)*x^2 + z * x - D
+ * 
+ * Use the quadratic formula to solve the equation
+ */
 const solvePart1 = (input) =>
   input.reduce((result, { time, distance }) => {
     const [sol1, sol2] = quadraticFormula({ a: -1, b: time, c: -1 * distance });
