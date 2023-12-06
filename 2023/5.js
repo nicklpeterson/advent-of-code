@@ -76,38 +76,28 @@ const parseArgv = (input) => {
   const seeds = input[0]
     .split(',')
     .filter((seed) => !isNaN(seed) && seed !== '');
-  const seedToSoil = new AlmanacMap(input[1]);
-  const soilToFertilizer = new AlmanacMap(input[2]);
-  const fertilizerToWater = new AlmanacMap(input[3]);
-  const waterToLight = new AlmanacMap(input[4]);
-  const lightToTemperature = new AlmanacMap(input[5]);
-  const temperatureToHumidity = new AlmanacMap(input[6]);
-  const humidityToLocation = new AlmanacMap(input[7]);
+
+  const seedToLocation = (seed) =>
+    [1, 2, 3, 4, 5, 6, 7].reduce(
+      (acc, index) => new AlmanacMap(input[index]).get(acc),
+      seed
+    );
+
+  const seedRangeToLocation = (seedRange) =>
+    [2, 3, 4, 5, 6, 7].reduce(
+      (acc, index) => new AlmanacMap(input[index]).getRanges(acc),
+      new AlmanacMap(input[1]).getRange(seedRange)
+    );
 
   return {
     seeds,
-    seedToSoil,
-    soilToFertilizer,
-    fertilizerToWater,
-    waterToLight,
-    lightToTemperature,
-    temperatureToHumidity,
-    humidityToLocation,
+    seedToLocation,
+    seedRangeToLocation,
   };
 };
 
-const solvePart1 = (input) => {
-  const locations = input.seeds.map((seed) => {
-    const soil = input.seedToSoil.get(seed);
-    const fertilizer = input.soilToFertilizer.get(soil);
-    const water = input.fertilizerToWater.get(fertilizer);
-    const light = input.waterToLight.get(water);
-    const temp = input.lightToTemperature.get(light);
-    const humidity = input.temperatureToHumidity.get(temp);
-    return input.humidityToLocation.get(humidity);
-  });
-  return Math.min(...locations);
-};
+const solvePart1 = (input) =>
+  Math.min(...input.seeds.map(input.seedToLocation));
 
 const solvePart2 = (input) => {
   const seedRanges = input.seeds
@@ -121,18 +111,7 @@ const solvePart2 = (input) => {
     }, [])
     .sort((a, b) => a[0] - b[0]);
 
-  const locationRanges = seedRanges
-    .map((seedRange) => {
-      const soilRanges = input.seedToSoil.getRange(seedRange);
-      const fertilizerRanges = input.soilToFertilizer.getRanges(soilRanges);
-      const waterRanges = input.fertilizerToWater.getRanges(fertilizerRanges);
-      const lightRanges = input.waterToLight.getRanges(waterRanges);
-      const tempRanges = input.lightToTemperature.getRanges(lightRanges);
-      const humidityRanges = input.temperatureToHumidity.getRanges(tempRanges);
-      return input.humidityToLocation.getRanges(humidityRanges);
-    })
-    .flat();
-
+  const locationRanges = seedRanges.map(input.seedRangeToLocation).flat();
   return Math.min(...locationRanges.map(([start, _]) => start));
 };
 
