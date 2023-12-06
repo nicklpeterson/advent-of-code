@@ -42,20 +42,17 @@ class AlmanacMap {
       const endIsWithinRange = end >= source[0] && end <= source[1];
 
       if (startIsWithinRange && endIsWithinRange) {
-        const newStart = destination[0] + start - source[0];
-        const newEnd = destination[0] + end - source[0];
-        ranges.push([newStart, newEnd]);
+        ranges.push([
+          destination[0] + start - source[0],
+          destination[0] + end - source[0],
+        ]);
         return ranges;
       } else if (startIsWithinRange) {
-        const newStart = destination[0] + start - source[0];
-        const newEnd = destination[1];
-        ranges.push([newStart, newEnd]);
+        ranges.push([destination[0] + start - source[0], destination[1]]);
         start = source[1] + 1;
       } else if (endIsWithinRange) {
         ranges.push([start, source[0] - 1]);
-        const newStart = destination[0];
-        const newEnd = destination[0] + end - source[0];
-        ranges.push([newStart, newEnd]);
+        ranges.push([destination[0], destination[0] + end - source[0]]);
         return ranges;
       } else if (start < source[0] && end > source[1]) {
         ranges.push([start, source[0] - 1]);
@@ -66,6 +63,10 @@ class AlmanacMap {
 
     ranges.push([start, end]);
     return ranges;
+  }
+
+  getRanges(ranges) {
+    return ranges.map((range) => this.getRange(range)).flat();
   }
 }
 
@@ -123,24 +124,12 @@ const solvePart2 = (input) => {
   const locationRanges = seedRanges
     .map((seedRange) => {
       const soilRanges = input.seedToSoil.getRange(seedRange);
-      const fertilizerRanges = soilRanges
-        .map((range) => input.soilToFertilizer.getRange(range))
-        .flat();
-      const waterRanges = fertilizerRanges
-        .map((range) => input.fertilizerToWater.getRange(range))
-        .flat();
-      const lightRanges = waterRanges
-        .map((range) => input.waterToLight.getRange(range))
-        .flat();
-      const tempRanges = lightRanges
-        .map((range) => input.lightToTemperature.getRange(range))
-        .flat();
-      const humidityRanges = tempRanges
-        .map((range) => input.temperatureToHumidity.getRange(range))
-        .flat();
-      return humidityRanges
-        .map((range) => input.humidityToLocation.getRange(range))
-        .flat();
+      const fertilizerRanges = input.soilToFertilizer.getRanges(soilRanges);
+      const waterRanges = input.fertilizerToWater.getRanges(fertilizerRanges);
+      const lightRanges = input.waterToLight.getRanges(waterRanges);
+      const tempRanges = input.lightToTemperature.getRanges(lightRanges);
+      const humidityRanges = input.temperatureToHumidity.getRanges(tempRanges);
+      return input.humidityToLocation.getRanges(humidityRanges);
     })
     .flat();
 
