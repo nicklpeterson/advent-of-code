@@ -1,5 +1,23 @@
 const argv = require('minimist')(process.argv.slice(2));
 
+/**
+ * This is a math problem - fun!
+ *
+ * Y = distance traveled
+ * x = time pushing button
+ * z = time of event
+ * D = record distance
+ *
+ * Y = x * (z - x)
+ * Y = xz - x^2 = (-1)*x^2 + z * x + 0
+ *
+ * Solve for x such that f(x) = D
+ * D = (-1)*x^2 + z * x
+ * 0 = (-1)*x^2 + z * x - D
+ *
+ * Use the quadratic formula to solve the equation
+ */
+
 const parseArgvPart1 = (input) => {
   const times = input.slice(1, 5);
   const distances = input.slice(6, 10);
@@ -22,23 +40,6 @@ const quadraticFormula = ({ a, b, c }) => {
   return [sol1, sol2];
 };
 
-/**
- * This is a math problem - fun!
- * 
- * Y = distance traveled
- * x = time pushing button
- * z = time of event
- * D = record distance
- * 
- * Y = x * (z - x)
- * Y = xz - x^2 = (-1)*x^2 + z * x + 0
- * 
- * Solve for x such that f(x) = D
- * D = (-1)*x^2 + z * x
- * 0 = (-1)*x^2 + z * x - D
- * 
- * Use the quadratic formula to solve the equation
- */
 const solvePart1 = (input) =>
   input.reduce((result, { time, distance }) => {
     const [sol1, sol2] = quadraticFormula({ a: -1, b: time, c: -1 * distance });
