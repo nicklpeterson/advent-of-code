@@ -56,7 +56,6 @@ const getNumberOfMatches = ({ winningNumbers, numbersYouHave }) => {
     if (winningNumber === yourNumber) {
       matches++;
       cardPtr++;
-      ``;
     } else if (winningNumber > yourNumber) {
       cardPtr++;
     } else {
