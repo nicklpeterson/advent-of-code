@@ -19,18 +19,17 @@ const jokerDeck = ['J', 2, 3, 4, 5, 6, 7, 8, 9, 'T', 'Q', 'K', 'A'].reduce(
 );
 
 const parseArgv = (input) =>
-  input
-    .reduce((cards, token, index) => {
-      if (index % 2 === 0) {
-        cards.push({
-          cards: `${token}`,
-          bid: input[index + 1],
-          counts: getCardCounts(`${token}`),
-        });
-      }
-      return cards;
-    }, [])
-    .map((hand) => ({ ...hand, type: getHandType(hand) }));
+  input.reduce((cards, token, index) => {
+    if (index % 2 === 0) {
+      const hand = {
+        cards: `${token}`,
+        bid: input[index + 1],
+        counts: getCardCounts(`${token}`),
+      };
+      cards.push({ ...hand, type: getHandType(hand) });
+    }
+    return cards;
+  }, []);
 
 const getCardCounts = (cards) =>
   [...cards].reduce((counts, card) => {
@@ -39,52 +38,48 @@ const getCardCounts = (cards) =>
   }, {});
 
 const getHandType = (hand) => {
-  const unique = Object.keys(hand.counts).length;
-  if (unique === 5) {
-    return HIGH_CARD;
-  } else if (unique === 4) {
-    return ONE_PAIR;
-  } else if (unique === 3) {
-    const isTwoPair = Object.values(hand.counts).find((count) => count === 2);
-    return isTwoPair ? TWO_PAIR : THREE_OF_A_KIND;
-  } else if (unique === 2) {
-    const isFullHouse = Object.values(hand.counts).find((count) => count === 3);
-    return isFullHouse ? FULL_HOUSE : FOUR_OF_A_KIND;
-  } else {
-    return FIVE_OF_A_KIND;
-  }
+  const uniqueCards = Object.keys(hand.counts).length;
+  const aCardAppearsTwice = Object.values(hand.counts).some(
+    (count) => count === 2
+  );
+  const aCardAppearsThreeTimes = Object.values(hand.counts).some(
+    (count) => count === 3
+  );
+
+  if (uniqueCards === 5) return HIGH_CARD;
+  if (uniqueCards === 4) return ONE_PAIR;
+  if (uniqueCards === 3) return aCardAppearsTwice ? TWO_PAIR : THREE_OF_A_KIND;
+  if (uniqueCards === 2)
+    return aCardAppearsThreeTimes ? FULL_HOUSE : FOUR_OF_A_KIND;
+  return FIVE_OF_A_KIND;
 };
 
 const applyJokers = (hand) => {
-  const js = hand.counts['J'];
-  if (hand.type === HIGH_CARD && js) {
-    return ONE_PAIR;
-  } else if (hand.type === ONE_PAIR && (js === 1 || js === 2)) {
-    return THREE_OF_A_KIND;
-  } else if (hand.type === TWO_PAIR && js) {
-    return js === 2 ? FOUR_OF_A_KIND : FULL_HOUSE;
-  } else if (hand.type === THREE_OF_A_KIND && js) {
-    return FOUR_OF_A_KIND;
-  } else if ((hand.type === FULL_HOUSE || hand.type === FOUR_OF_A_KIND) && js) {
-    return FIVE_OF_A_KIND;
+  const jokers = hand.counts['J'];
+  if (!jokers) return hand.type;
+  if (hand.type === HIGH_CARD) return ONE_PAIR;
+  if (hand.type === ONE_PAIR) return THREE_OF_A_KIND;
+  if (hand.type === TWO_PAIR) return jokers === 2 ? FOUR_OF_A_KIND : FULL_HOUSE;
+  if (hand.type === THREE_OF_A_KIND) return FOUR_OF_A_KIND;
+  return FIVE_OF_A_KIND;
+};
+
+const getComparator = (deck) => (handA, handB) => {
+  if (handA.type !== handB.type) {
+    return handA.type - handB.type;
+  } else {
+    for (let i = 0; i < 5; i++) {
+      if (deck[handA.cards[i]] !== deck[handB.cards[i]]) {
+        return deck[handA.cards[i]] - deck[handB.cards[i]];
+      }
+    }
   }
-  return hand.type;
+  return 0;
 };
 
 const sumBidsByRank = (hands, deck) =>
   hands
-    .sort((handA, handB) => {
-      if (handA.type !== handB.type) {
-        return handA.type - handB.type;
-      } else {
-        for (let i = 0; i < 5; i++) {
-          if (deck[handA.cards[i]] !== deck[handB.cards[i]]) {
-            return deck[handA.cards[i]] - deck[handB.cards[i]];
-          }
-        }
-      }
-      return 0;
-    })
+    .sort(getComparator(deck))
     .reduce((total, hand, index) => total + hand.bid * (index + 1), 0);
 
 const solvePart1 = (input) => sumBidsByRank(input, standardDeck);
