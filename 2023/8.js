@@ -43,8 +43,7 @@ const compressMap = ({ map, directions, stop }) =>
 
 const greatestCommonDivisor = (a, b) => {
   if (a > b) return greatestCommonDivisor(b, a);
-  if (a === 0) return b;
-  return greatestCommonDivisor(b % a, a);
+  return a === 0 ? b : greatestCommonDivisor(b % a, a);
 };
 
 const leastCommonMultiple = (a, b) => (a * b) / greatestCommonDivisor(a, b);
