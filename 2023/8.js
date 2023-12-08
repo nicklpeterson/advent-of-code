@@ -46,7 +46,8 @@ const greatestCommonDivisor = (a, b) => {
   return a === 0 ? b : greatestCommonDivisor(b % a, a);
 };
 
-const leastCommonMultiple = (a, b) => (a * b) / greatestCommonDivisor(a, b);
+const leastCommonMultiple = (nums) =>
+  nums.reduce((a, b) => (a * b) / greatestCommonDivisor(a, b));
 
 const walkMap = ({ map, node = 'AAA', count = 0, stop }) => {
   if (stop(node)) {
@@ -70,12 +71,8 @@ const solvePart2 = ({ map, directions }) => {
   const stop = (node) => node.slice(-1) === 'Z';
   const cMap = compressMap({ map, directions, stop });
   const nodes = Object.keys(cMap).filter((node) => node.slice(-1) === 'A');
-  const counts = [];
-  nodes.forEach((node) => {
-    counts.push(walkMap({ map: cMap, node, stop }));
-  });
-
-  return counts.reduce((result, count) => leastCommonMultiple(result, count));
+  const counts = nodes.map((node) => walkMap({ map: cMap, node, stop }));
+  return leastCommonMultiple(counts);
 };
 
 const input = parseArgv(argv._);
