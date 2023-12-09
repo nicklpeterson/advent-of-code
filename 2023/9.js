@@ -1,33 +1,27 @@
-const extrapolate = (data, layers = [data]) => {
-  if (data.every((y) => y === 0)) return calculateValues(layers);
-  const layer = [];
-  for (let i = 1; i < data.length; i++) layer.push(data[i] - data[i - 1]);
-  return extrapolate(layer, [...layers, layer]);
-};
-
-const calculateValues = (layers) => {
-  if (layers.length === 1) return layers[0];
-
-  const bottomLayer = layers.pop();
-
-  layers[layers.length - 1] = [
-    layers.at(-1).shift() - bottomLayer.shift(),
-    layers.at(-1).pop() + bottomLayer.pop(),
-  ];
-
-  return calculateValues(layers);
+const lagrange = (vals, x) => {
+  let sum = 0;
+  for (let k = 0; k < vals.length; k++) {
+    let product = vals[k];
+    for (let i = 0; i < vals.length; i++) {
+      if (i !== k) product *= (x - i) / (k - i);
+    }
+    sum += product;
+  }
+  return sum;
 };
 
 const solve = (input) => {
   const result = { p1: 0, p2: 0 };
   while (input.length) {
-    const [prev, next] = extrapolate(input.splice(0, 21));
-    (result.p1 += next), (result.p2 += prev);
+    const dataPoints = input.splice(0, 21);
+    result.p1 += lagrange(dataPoints, 21);
+    result.p2 += lagrange(dataPoints, -1);
   }
   return result;
 };
 
-const { p1, p2 } = solve(process.argv.slice(2).map((point) => Number(point)));
+const input = process.argv.slice(2).map((point) => Number(point));
+const { p1, p2 } = solve(input);
 
-console.log('Part 1 - ', p1);
-console.log('Part 2 - ', p2);
+console.log('Part 1 - ', Math.round(p1));
+console.log('Part 2 - ', Math.round(p2));
