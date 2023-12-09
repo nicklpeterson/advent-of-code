@@ -17,29 +17,10 @@ const parseArgv = (input) => {
   return { map, directions };
 };
 
-const walkWithDirections = ({ directions, map, node, stop, index = 0 }) => {
-  if (index >= directions.length || stop(node)) {
-    return { next: node, count: index };
-  }
-  return walkWithDirections({
-    directions,
-    map,
-    stop,
-    node: map[node][directions[index]],
-    index: index + 1,
-  });
-};
-
-const compressMap = ({ map, directions, stop }) =>
-  Object.keys(map).reduce((result, node) => {
-    result[node] = walkWithDirections({
-      directions,
-      map,
-      node,
-      stop,
-    });
-    return result;
-  }, {});
+const getNextDirection = ({ directions, index }) =>
+  directions[
+    ((index % directions.length) + directions.length) % directions.length
+  ];
 
 const greatestCommonDivisor = (a, b) => {
   if (a > b) return greatestCommonDivisor(b, a);
@@ -49,29 +30,26 @@ const greatestCommonDivisor = (a, b) => {
 const leastCommonMultiple = (nums) =>
   nums.reduce((a, b) => (a * b) / greatestCommonDivisor(a, b));
 
-const walkMap = ({ map, node = 'AAA', count = 0, stop }) => {
-  if (stop(node)) {
-    return count;
+const walkMap = ({ map, directions, stop, node = 'AAA' }) => {
+  let index = 0;
+
+  while (!stop(node)) {
+    const dir = getNextDirection({ directions, index: index++ });
+    node = map[node][dir];
   }
 
-  return walkMap({
-    map,
-    node: map[node].next,
-    count: map[node].count + count,
-    stop,
-  });
+  return index;
 };
 
 const solvePart1 = ({ map, directions }) => {
   const stop = (node) => node === 'ZZZ';
-  return walkMap({ map: compressMap({ map, directions, stop }), stop });
+  return walkMap({ map, directions, stop });
 };
 
 const solvePart2 = ({ map, directions }) => {
   const stop = (node) => node.slice(-1) === 'Z';
-  const cMap = compressMap({ map, directions, stop });
-  const nodes = Object.keys(cMap).filter((node) => node.slice(-1) === 'A');
-  const counts = nodes.map((node) => walkMap({ map: cMap, node, stop }));
+  const nodes = Object.keys(map).filter((node) => node.slice(-1) === 'A');
+  const counts = nodes.map((node) => walkMap({ map, node, directions, stop }));
   return leastCommonMultiple(counts);
 };
 
