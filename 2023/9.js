@@ -1,13 +1,8 @@
 const dydx = (data, layers = [data]) => {
   if (data.every((y) => y === 0)) return layers;
-
   const layer = [];
-  data.forEach((y, index) => {
-    if (index > 0) layer.push(y - data[index - 1]);
-  });
-
-  layers.push(layer);
-  return dydx(layer, layers);
+  for (let i = 1; i < data.length; i++) layer.push(data[i] - data[i - 1]);
+  return dydx(layer, [...layers, layer]);
 };
 
 const extrapolate = (layers) => {
@@ -26,19 +21,15 @@ const extrapolate = (layers) => {
 };
 
 const solve = (input) => {
-  input = input.map((point) => Number(point));
-  const dataSets = [];
-  while (input.length > 0) dataSets.push(input.splice(0, 21));
-  return dataSets.reduce(
-    (result, dataSet) => {
-      const [prev, next] = extrapolate(dydx(dataSet));
-      return { p1: result.p1 + next, p2: result.p2 + prev };
-    },
-    { p1: 0, p2: 0 }
-  );
+  const result = { p1: 0, p2: 0 };
+  while (input.length > 0) {
+    const [prev, next] = extrapolate(dydx(input.splice(0, 21)));
+    (result.p1 += next), (result.p2 += prev);
+  }
+  return result;
 };
 
-const { p1, p2 } = solve(process.argv.slice(2));
+const { p1, p2 } = solve(process.argv.slice(2).map((point) => Number(point)));
 
 console.log('Part 1 - ', p1);
 console.log('Part 2 - ', p2);
