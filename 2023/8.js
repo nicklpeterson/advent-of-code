@@ -32,12 +32,8 @@ const leastCommonMultiple = (nums) =>
 
 const walkMap = ({ map, directions, stop, node = 'AAA' }) => {
   let index = 0;
-
-  while (!stop(node)) {
-    const dir = getNextDirection({ directions, index: index++ });
-    node = map[node][dir];
-  }
-
+  while (!stop(node))
+    node = map[node][getNextDirection({ directions, index: index++ })];
   return index;
 };
 
