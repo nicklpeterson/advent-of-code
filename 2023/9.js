@@ -22,7 +22,7 @@ const extrapolate = (layers) => {
 
 const solve = (input) => {
   const result = { p1: 0, p2: 0 };
-  while (input.length > 0) {
+  while (input.length) {
     const [prev, next] = extrapolate(dydx(input.splice(0, 21)));
     (result.p1 += next), (result.p2 += prev);
   }
