@@ -26,19 +26,19 @@ const extrapolate = (layers) => {
 };
 
 const solve = (input) => {
-    input = input.map((point) => Number(point));
-    const dataSets = [];
-    while (input.length > 0) dataSets.push(input.splice(0, 21));
-    return dataSets.reduce(
-      (result, dataSet) => {
-        const [prev, next] = extrapolate(dydx(dataSet));
-        return { p1: result.p1 + next, p2: result.p2 + prev };
-      },
-      { p1: 0, p2: 0 }
-    );
-  };
+  input = input.map((point) => Number(point));
+  const dataSets = [];
+  while (input.length > 0) dataSets.push(input.splice(0, 21));
+  return dataSets.reduce(
+    (result, dataSet) => {
+      const [prev, next] = extrapolate(dydx(dataSet));
+      return { p1: result.p1 + next, p2: result.p2 + prev };
+    },
+    { p1: 0, p2: 0 }
+  );
+};
 
-const { p1, p2 } = solve(process.argv.slice(2))
+const { p1, p2 } = solve(process.argv.slice(2));
 
 console.log('Part 1 - ', p1);
 console.log('Part 2 - ', p2);
