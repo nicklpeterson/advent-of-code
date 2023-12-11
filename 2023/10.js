@@ -16,17 +16,16 @@ const connected = ({ map, coordinate, nextCoordinate }) => {
   const currentPipe = map[row][col];
   const nextPipe = map[nextRow][nextCol];
 
-  if (nextRow === row - 1) {
+  if (nextRow === row - 1)
     return currentPipe.match(/S|L|\||J/) && nextPipe.match(/S|\||7|F/);
-  } else if (nextRow === row + 1) {
+  else if (nextRow === row + 1)
     return currentPipe.match(/S|\||7|F/) && nextPipe.match(/S|\||L|J/);
-  } else if (nextCol === col - 1) {
+  else if (nextCol === col - 1)
     return currentPipe.match(/S|J|7|-/) && nextPipe.match(/S|-|L|F/);
-  } else if (nextCol === col + 1) {
+  else if (nextCol === col + 1)
     return currentPipe.match(/S|-|L|F/) && nextPipe.match(/S|J|7|-/);
-  } else {
-    return false;
-  }
+
+  return false;
 };
 
 const takeAStep = ({ map, coordinate, lastCoordinate = [null, null] }) =>
