@@ -42,11 +42,9 @@ const takeAStep = ({ map, coordinate, lastCoordinate = [null, null] }) =>
         row < map.length &&
         col < map[row]?.length
     )
-    .reduce((result, nextCoordinate) => {
-      return connected({ map, coordinate, nextCoordinate })
-        ? nextCoordinate
-        : result;
-    });
+    .reduce((result, nextCoordinate) =>
+      connected({ map, coordinate, nextCoordinate }) ? nextCoordinate : result
+    );
 
 const walkThePipe = ({
   map,
