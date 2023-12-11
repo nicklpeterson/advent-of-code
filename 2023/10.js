@@ -3,11 +3,7 @@ const parseArgv = (input) => {
   for (let row = 0; row < map.length; row++) {
     for (let col = 0; col < map[0].length; col++) {
       if (map[row][col] === 'S') {
-        return walkThePipe({
-          map,
-          coordinate: [row, col],
-          stop: ([row, col]) => map[row][col] === 'S',
-        });
+        return walkThePipe({ map, coordinate: [row, col] });
       }
     }
   }
@@ -21,25 +17,13 @@ const connected = ({ map, coordinate, nextCoordinate }) => {
   const nextPipe = map[nextRow][nextCol];
 
   if (nextRow === row - 1) {
-    return (
-      ['S', 'L', '|', 'J'].includes(currentPipe) &&
-      ['S', '|', '7', 'F'].includes(nextPipe)
-    );
+    return currentPipe.match(/S|L|\||J/) && nextPipe.match(/S|\||7|F/);
   } else if (nextRow === row + 1) {
-    return (
-      ['S', '|', '7', 'F'].includes(currentPipe) &&
-      ['S', 'L', '|', 'J'].includes(nextPipe)
-    );
+    return currentPipe.match(/S|\||7|F/) && nextPipe.match(/S|\||L|J/);
   } else if (nextCol === col - 1) {
-    return (
-      ['S', 'J', '7', '-'].includes(currentPipe) &&
-      ['S', '-', 'L', 'F'].includes(nextPipe)
-    );
+    return currentPipe.match(/S|J|7|-/) && nextPipe.match(/S|-|L|F/);
   } else if (nextCol === col + 1) {
-    return (
-      ['S', '-', 'L', 'F'].includes(currentPipe) &&
-      ['S', 'J', '7', '-'].includes(nextPipe)
-    );
+    return currentPipe.match(/S|-|L|F/) && nextPipe.match(/S|J|7|-/);
   } else {
     return false;
   }
@@ -68,12 +52,10 @@ const walkThePipe = ({
   map,
   coordinate,
   lastCoordinate,
-  stop,
   count = 0,
   visited = new Set(),
 }) => {
-  const start = coordinate;
-  while (!stop(coordinate) || count === 0) {
+  while (map[coordinate[0]][coordinate[1]] !== 'S' || count === 0) {
     visited.add(JSON.stringify(coordinate));
     const nextCoordinate = takeAStep({ map, coordinate, lastCoordinate });
     lastCoordinate = coordinate;
@@ -85,31 +67,28 @@ const walkThePipe = ({
 
 const solvePart1 = ({ count }) => count / 2;
 
-const solvePart2 = ({ visited, map }) => {
-  let area = 0;
+const solvePart2 = ({ visited, map }) =>
+  map.reduce((area, row, r) => {
+    let insideLoop = false;
 
-  for (let r = 0; r < map.length; r++) {
-    let wallCount = 0;
-    for (let c = 0; c < map[r].length; c++) {
+    for (let c = 0; c < row.length; c++) {
       const cellIsAPipe = visited.has(JSON.stringify([r, c]));
       const cell = map[r][c];
-      if (!cellIsAPipe && wallCount % 2 !== 0) {
-        area++;
-      } else if (cellIsAPipe && ['|', 'J', '7'].includes(cell)) {
-        wallCount++;
-      } else if (cellIsAPipe) {
+
+      if (!cellIsAPipe && insideLoop) area++;
+      else if (cellIsAPipe && cell.match(/\||J|7/)) insideLoop = !insideLoop;
+      else if (cellIsAPipe) {
         while (c + 1 < map[r].length && map[r][++c] === '-');
         if (
-          (!['F', 'S'].includes(cell) || !['7', 'S'].includes(map[r][c])) &&
-          (!['L', 'S'].includes(cell) || !['J', 'S'].includes(map[r][c]))
+          (!cell.match(/F|S/) || !map[r][c].match(/7|S/)) &&
+          (!cell.match(/L|S/) || !map[r][c].match(/J|S/))
         )
-          wallCount++;
+          insideLoop = !insideLoop;
       }
     }
-  }
 
-  return area;
-};
+    return area;
+  }, 0);
 
 const input = parseArgv(process.argv.slice(2));
 
