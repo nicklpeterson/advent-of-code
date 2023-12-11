@@ -78,7 +78,7 @@ const solvePart2 = ({ visited, map }) =>
       if (!cellIsAPipe && insideLoop) area++;
       else if (cellIsAPipe && cell.match(/\||J|7/)) insideLoop = !insideLoop;
       else if (cellIsAPipe) {
-        while (c + 1 < map[r].length && map[r][++c] === '-');
+        while (map[r][++c] === '-');
         if (
           (!cell.match(/F|S/) || !map[r][c].match(/7|S/)) &&
           (!cell.match(/L|S/) || !map[r][c].match(/J|S/))
